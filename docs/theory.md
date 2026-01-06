@@ -1,1 +1,11 @@
+## 1. Teorijski okvir
+
+Teorijsko poglavlje pokriva sama objašnjenja toga što je backup i oporavak. Također, detaljnije će biti objašnjene i dodatne podjele, načela i strategije ovih tehnika. One su važne za garantiranje minimalne štete poslovanju u slučaju neočekivanog gubitka podataka bilo ono uzrokovano namjerno ili nenamjerno. U namjerne situacije spadaju primjerice napadi na sustav, dok u nenamjerne situacije spadaju slučajna brisanja podataka ili druge vrste ljudskih grešaka.
+
+### 1.1. Backup
+
+Prema Nelsonu (2011), backup označava proces stvaranja sigurnosne kopije podataka u određenom trenutku, s ciljem njihove zaštite i kasnije obnove u slučaju gubitka. Često ljudi miješaju backup s arhiviranjem, no glavna razlika leži u svrsi i vremenskom horizontu pohrane. Backup se koristi za kratkoročno očuvanje dostupnosti podataka i omogućuje njihovu brzu obnovu u slučaju oštećenja, kvara ili slučajnog brisanja. S druge strane, arhiviranje je namijenjeno dugoročnom čuvanju podataka koji se više aktivno ne koriste, ali ih je potrebno zadržati zbog zakonskih, poslovnih ili povijesnih razloga. Ukratko, backup štiti aktivne podatke od gubitka, dok arhiva čuva neaktivne podatke za buduću referencu. Kod dizajna backup sustava i određivanja njegovih sposobnosti najvažnije je pratiti potrebe organizacije za koju se radi. Dvije ključne metrike koje određuju sposobnosti budućeg sustava su RTO (Return Time Objective) i RPO (Recovery Point Objective). Riječ je o ciljanim metrikama toga koliko dugo je potrebno da se sustav ponovno digne i toga kolika će biti vremenska šteta nakon dovršetka procesa oporavka. Prema Prestonu (2021.), sustav je važno i testirati kako bi se dobile konkretne metrike implementacije, čime se dobivaju vrijednosti RTA (Return Time Actual) i RPA (Recovery Point Actual). U politici sustava važno je odrediti i okvirno vrijeme provedbe kopiranja (en. backup window) zbog zahtjevnosti samog procesa, te vremenski period zadržavanja sigurnosnih kopija (engl. retention policy). Preston navodi kako je industrijski standard oko 18 mjeseci, jer nakon toga kopije više nisu kompatibilne s trenutnom arhitekturom sustava, a i uglavnom su za oporavak korišteni podaci iz proteklin nekoliko dana. 
+
+#### 1.1.1. Vrste backupa
+
 
