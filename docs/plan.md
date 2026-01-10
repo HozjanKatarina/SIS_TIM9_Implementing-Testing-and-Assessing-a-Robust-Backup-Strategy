@@ -41,3 +41,28 @@ Za sve navedene skupine podataka primjenjuje se sljedeća politika izrade i zadr
 - **tjedne pune sigurnosne kopije**, koje se zadržavaju **365 dana**
 - **mjesečne arhivske pune sigurnosne kopije**, koje se pohranjuju na **neograničeno razdoblje**
 
+## 3.7. RTO i RPO metrike
+
+RPO (Recovery Point Objective) u ovom projektu iznosi 24 sata. Ova vrijednost proizlazi iz činjenice da se sigurnosne kopije podataka izrađuju svakodnevno u obliku inkrementalnih kopija. Time je u slučaju incidenta gubitak podataka ograničen na maksimalno jedan dan rada, što se smatra prihvatljivim za promatrani sustav.
+
+RTO (Recovery Time Objective) postavljen je na 4 sata. Ova vrijednost predstavlja maksimalno prihvatljivo vrijeme potrebno za povrat podataka i ponovno uspostavljanje funkcionalnosti sustava nakon incidenta. U definirani RTO uključeni su postupci odabira odgovarajuće sigurnosne kopije, povrata podataka te provjere ispravnosti sustava nakon oporavka.
+
+## 3.8. Scenariji gubitka podataka i oporavka sustava
+
+Kako bi se provjerila učinkovitost odabrane strategije sigurnosnog kopiranja, sustav će se testirati kroz nekoliko mogućih scenarija gubitka podataka. Odabrani scenariji predstavljaju realne situacije koje se mogu pojaviti u stvarnom IT okruženju.
+
+### 3.8.1. Slučajno brisanje podataka
+
+U ovom scenariju dolazi do slučajnog brisanja jedne ili više datoteka iz zajedničkog direktorija. Sustav ostaje funkcionalan, no određeni poslovni podaci postaju nedostupni.
+
+Oporavak se provodi povratom obrisanih datoteka iz zadnje dostupne dnevne inkrementalne sigurnosne kopije. Na taj način gubitak podataka ograničen je unutar definiranog RPO-a od 24 sata, dok se oporavak provodi unutar planiranog RTO vremena.
+
+### 3.8.2. Ransomware napad
+
+U ovom scenariju simulira se ransomware napad pri kojem dolazi do kompromitacije podataka u zajedničkim direktorijima, primjerice šifriranjem ili izmjenom sadržaja datoteka. Iako su podaci fizički prisutni, oni postaju neupotrebljivi.
+
+S obzirom na opseg projekta, simulacija ransomware napada fokusirana je na posljedice napada, a ne na sam proces širenja zlonamjernog softvera. Oporavak sustava provodi se vraćanjem podataka iz zadnje dostupne čiste pune sigurnosne kopije, uz eventualnu primjenu inkrementalnih kopija izrađenih prije incidenta.
+
+Mjerenje RTO u ovom scenariju započinje u trenutku donošenja odluke o povratu podataka iz sigurnosne kopije. Time se osigurava da se oporavak sustava provodi unutar definiranih RTO i RPO vrijednosti, bez korištenja kompromitiranih podataka.
+
+
