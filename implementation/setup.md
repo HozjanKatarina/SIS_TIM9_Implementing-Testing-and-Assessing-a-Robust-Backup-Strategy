@@ -69,7 +69,7 @@ Ovakva konfiguracija predstavlja sigurnosni rizik jer omogućuje potencijalno pr
 /usr/bin/duplicity incremental --no-encryption \
   --archive-dir "$CACHE_DIR" "$BACKUP_SRC" "$BACKUP_DEST"
 ```
-Problem: backup datoteke pohranjene na poslužitelju su čitljive. Ako netko dobije pristup backup lokaciji (ili disk bude kompromitiran), kompromitirani su i svi podaci koji su trebali biti “sigurnosna kopija.
+Problem: backup datoteke pohranjene na poslužitelju su čitljive. Ako netko dobije pristup backup lokaciji (ili disk bude kompromitiran), kompromitirani su i svi podaci koji su trebali biti sigurnosna kopija.
 
 3) SSH identitet poslužitelja se ne provjerava
    Skripta koristi SSH opcije koje eksplicitno isključuju provjeru identiteta poslužitelja:
