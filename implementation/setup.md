@@ -36,22 +36,17 @@ Prilikom instalacije Bacule valja paziti na to koja verzija je odabrana jer Bacu
 
 Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njia orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd.
 
-PISAT O KONFIGURACIJI BACULE
-
 ## Povezivanje Bacule i Duplicityja
-Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta run_duplicity.sh koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. S obzirom na to kako je odabrana GFS strategija, važno je razlikovati pune i inkrementalne backupove, te to radi li se o djedu, ocu ili sinu. Time će upravljati logika skripte, a za svaku opciju Bacula će samo imati definiran drugi Job u kojem će se skripti proslijediti drugačiji parametar.ž
+Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta run_duplicity.sh koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. S obzirom na to kako je odabrana GFS strategija, važno je razlikovati pune i inkrementalne backupove, te to radi li se o djedu, ocu ili sinu. Time će upravljati logika skripte, a za svaku opciju Bacula će samo imati definiran drugi Job u kojem će se skripti proslijediti drugačiji parametar.
 
 ## Postavljanje sustava i analiza konfiguracije
-
-
-
-
-### Pokretanje Duplicity skripte iz Bacule
+Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
 
 ### Uočeni nedostatci 
 U nastavku su opisani ključni nedostaci početnog rješenja. Za svaki nedostatak prikazan je konkretan dio konfiguracije ili koda iz kojeg je vidljivo zašto je to problem.
 
-1) Nezaštićena Bacula komunikacija (TLS isključen na klijentu) 
+1) Nezaštićena Bacula komunikacija (TLS isključen na klijentu)
+   
  U konfiguraciji Bacula File Daemona na klijentu TLS je bio isključen, što znači da komunikacija Director ↔ FD nije enkriptirana:
  ```conf
 FileDaemon {
