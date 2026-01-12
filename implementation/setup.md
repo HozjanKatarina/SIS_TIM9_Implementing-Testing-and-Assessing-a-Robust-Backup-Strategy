@@ -82,3 +82,7 @@ Problem: klijent se može spojiti na “lažni” poslužitelj bez upozorenja. T
     
 U početnoj verziji skripte korištene su tvrdo zadane vrijednosti (primjer lozinki/passphrase)
 Problem: lozinke u skripti ili u okruženju mogu završiti u logovima, povijesti naredbi ili kroz procese. Osim sigurnosti, to otežava održavanje jer se vrijednosti moraju ručno mijenjati u kodu.
+
+## Poboljšanja konfiguracije 
+
+Nakon uočenih slabosti provedene su izmjene kako bi sustav bio sigurniji i pouzdaniji. Poboljšanja su ciljano adresirala komunikacijsku sigurnost, zaštitu backup sadržaja i pouzdanost oporavka.
