@@ -37,7 +37,7 @@ Prilikom instalacije Bacule valja paziti na to koja verzija je odabrana jer Bacu
 Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njia orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd.
 
 ## Povezivanje Bacule i Duplicityja
-Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta run_duplicity.sh koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. S obzirom na to kako je odabrana GFS strategija, važno je razlikovati pune i inkrementalne backupove, te to radi li se o djedu, ocu ili sinu. Time će upravljati logika skripte, a za svaku opciju Bacula će samo imati definiran drugi Job u kojem će se skripti proslijediti drugačiji parametar.
+Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta (duplicity.sh) koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. S obzirom na to kako je odabrana GFS strategija, važno je razlikovati pune i inkrementalne backupove, te to radi li se o djedu, ocu ili sinu. Time će upravljati logika skripte, a za svaku opciju Bacula će samo imati definiran drugi Job u kojem će se skripti proslijediti drugačiji parametar.
 
 ## Postavljanje sustava i analiza konfiguracije
 Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
@@ -85,4 +85,8 @@ Problem: lozinke u skripti ili u okruženju mogu završiti u logovima, povijesti
 
 ## Poboljšanja konfiguracije 
 
-Nakon uočenih slabosti provedene su izmjene kako bi sustav bio sigurniji i pouzdaniji. Poboljšanja su ciljano adresirala komunikacijsku sigurnost, zaštitu backup sadržaja i pouzdanost oporavka.
+Nakon uočenih slabosti provedene su izmjene kako bi sustav bio sigurniji i pouzdaniji. Poboljšanja su ciljano adresirala komunikacijsku sigurnost, zaštitu backup sadržaja i pouzdanost oporavka. 
+
+Komunikacija između klijenta i servera osigurana je TLS-om. Alatom OpenSSL kreirani su certifikati i ključevi koji su postavljeni u direktorije Bacule. Korisniku "bacula" dana su prava za pristup tim ključevima. Omogućene su sve opcije vezane uz TLS u konfiguracijskim datotekama.
+
+Sigurnost samih datoteka omogućena je enkripcijom arhiva koje kreira Duplicity. Pri samom pozivu alata Duplicity definira se identifikator ključa kojim se datoteke kriptiraju alatom GPG. Time se na server u konačnici prenose datoteke s .gpg ekstenzijom.
