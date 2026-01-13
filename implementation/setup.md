@@ -112,6 +112,27 @@ fi
 
 Važno je napomenuti kako u direktoriju sina neće biti samo inkrementalne kopije. Zbog načina na koji je Duplicity kreiran, Duplicity svoje sigurnosne kopije vidi u lancima koji se nalaze u trenutnom direktoriju. On ne može za inkrementalne kopije gledati neku čitavu kopiju u drugom direktoriju. Zato će se kod svakog full backupa jedna kopija spremiti u direktorij njemu pripadajuće razine (otac ili djed), te još jedna kopija u direktorij sina da se slijedeće inkrementalne kopije nadovezuju na nju. Naravno, tamo će še češće čistiti pa neće doći do tolikog prostornog zasićenja.
 
+Time dobivamo slijedeću strukturu na poslužitelju:
+```
+/home/vbox/backup/
+├── demo-grandfather/             [RAZINA: DJED]
+│   ├── duplicity-full.manifest.gpg
+│   ├── duplicity-full.20260101T120000Z.vol1.difftar.gpg
+│   └── duplicity-full-signatures.sigtar.gpg
+│
+├── demo-father/                  [RAZINA: OTAC]
+│   ├── duplicity-full.manifest.gpg
+│   ├── duplicity-full.20260107T120000Z.vol1.difftar.gpg
+│   └── duplicity-full-signatures.sigtar.gpg
+│
+└── demo-son/                     [RAZINA: SIN]
+    ├── duplicity-full.manifest.gpg
+    ├── duplicity-full.20260113T100000Z.vol1.difftar.gpg
+    ├── duplicity-full-signatures.sigtar.gpg
+    ├── duplicity-inc.20260113T120000Z.to.20260113T140000Z.vol1.difftar.gpg
+    └── duplicity-inc.manifest.gpg
+```
+
 ## Analiza konfiguracije
 Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
 
