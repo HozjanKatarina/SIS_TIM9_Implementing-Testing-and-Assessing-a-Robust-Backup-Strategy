@@ -43,9 +43,13 @@ Za sve navedene skupine podataka primjenjuje se sljedeća politika izrade i zadr
 
 ## 3.7. RTO i RPO metrike
 
-RPO (Recovery Point Objective) u ovom projektu iznosi 24 sata. Ova vrijednost proizlazi iz činjenice da se sigurnosne kopije podataka izrađuju svakodnevno u obliku inkrementalnih kopija. Time je u slučaju incidenta gubitak podataka ograničen na maksimalno jedan dan rada, što se smatra prihvatljivim za promatrani sustav.
+RPO (Recovery Point Objective) u ovom projektu razlikuje se ovisno o vrsti incidenta koji se razmatra. U slučaju slučajnog brisanja datoteka, sigurnosne kopije izrađuju se svakodnevno u obliku inkrementalnih kopija, čime je gubitak podataka ograničen na maksimalno 24 sata. Takav gubitak podataka smatra se prihvatljivim za promatrani sustav, budući da se radi o operativnom incidentu niskog rizika koji ne ugrožava cjelokupnu dostupnost sustava.
 
-RTO (Recovery Time Objective) postavljen je na 4 sata. Ova vrijednost predstavlja maksimalno prihvatljivo vrijeme potrebno za povrat podataka i ponovno uspostavljanje funkcionalnosti sustava nakon incidenta. U definirani RTO uključeni su postupci odabira odgovarajuće sigurnosne kopije, povrata podataka te provjere ispravnosti sustava nakon oporavka.
+RTO (Recovery Time Objective) za scenarij slučajnog brisanja datoteka postavljen je u rasponu od 30 minuta do 1 sata. Ova vrijednost obuhvaća vrijeme potrebno za identifikaciju odgovarajuće sigurnosne kopije te povrat pojedinačnih datoteka bez potrebe za prekidom rada sustava, čime se osigurava brz i učinkovit oporavak uz minimalan utjecaj na korisnike.
+
+Nasuprot tome, ransomware napad predstavlja sigurnosni incident visoke razine, koji zahtijeva znatno složeniji postupak oporavka. U takvom scenariju nužno je izolirati kompromitirani sustav, provesti ponovnu instalaciju operacijskog sustava te vratiti podatke iz provjerenih i neoštećenih sigurnosnih kopija. Zbog složenosti navedenih postupaka, RTO je značajno dulji te iznosi između 8 i 24 sata, što predstavlja maksimalno prihvatljivo vrijeme za potpunu ponovnu uspostavu funkcionalnosti sustava.
+
+RPO za ransomware scenarij definiran je strože, u rasponu od 15 minuta do 1 sata, s ciljem smanjenja potencijalnog gubitka podataka u slučaju sigurnosnog incidenta. Takav pristup naglašava važnost čestog sigurnosnog kopiranja i pouzdane strategije oporavka, osobito u kontekstu zaštite od zlonamjernih napada koji mogu imati ozbiljne posljedice po integritet i dostupnost podataka.
 
 ## 3.8. Scenariji gubitka podataka i oporavka sustava
 
