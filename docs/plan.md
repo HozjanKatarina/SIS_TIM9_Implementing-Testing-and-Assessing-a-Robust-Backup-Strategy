@@ -33,10 +33,12 @@ Strategija sigurnosnog kopiranja temelji se na dvije skupine podataka:
 - **Baza podataka (logička sigurnosna kopija – dump)**  
   Drugu skupinu podataka čini baza podataka pohranjena u obliku logičke sigurnosne kopije (dump), odnosno datoteke koja sadrži izvezene podatke i strukturu baze. Umjesto kopiranja fizičkih datoteka baze, izrađuje se logički izvoz podataka, što olakšava postupak oporavka i testiranje povrata podataka.
 
-Za sve navedene skupine podataka primjenjuje se sljedeća politika izrade i zadržavanja sigurnosnih kopija:
+Za zajedničke poslovne podatke primjenjuje se sljedeća politika izrade i zadržavanja sigurnosnih kopija:
 - **dnevne inkrementalne sigurnosne kopije**, koje se čuvaju **30 dana**
 - **tjedne pune sigurnosne kopije**, koje se zadržavaju **365 dana**
 - **mjesečne arhivske pune sigurnosne kopije**, koje se pohranjuju na **neograničeno razdoblje**
+
+Za baze podataka koriste se **tjedne pune sigurnosne kopije** i **mjesečne arhivske pune sigurnosne kopije** pri čemu je vrijeme pohrane jednako kao i kod zajedničkih poslovnih podataka. 
 
 ## RTO i RPO metrike
 
