@@ -89,4 +89,55 @@ Nakon uočenih slabosti provedene su izmjene kako bi sustav bio sigurniji i pouz
 
 Komunikacija između klijenta i servera osigurana je TLS-om. Alatom OpenSSL kreirani su certifikati i ključevi koji su postavljeni u direktorije Bacule. Korisniku "bacula" dana su prava za pristup tim ključevima. Omogućene su sve opcije vezane uz TLS u konfiguracijskim datotekama.
 
-Sigurnost samih datoteka omogućena je enkripcijom arhiva koje kreira Duplicity. Pri samom pozivu alata Duplicity definira se identifikator ključa kojim se datoteke kriptiraju alatom GPG. Time se na server u konačnici prenose datoteke s .gpg ekstenzijom.
+Na strani Bacula backup poslužitelja potrebno je definirati njegov certifikatorski autoritet, certifikat i ključ u postavkama klijenta (bacula-dir.conf):
+```
+Client {
+  Name = kali-fd
+  Address = 10.0.2.15
+  FDPort = 9102
+  Password = "kali"
+  Catalog = MyCatalog
+
+  TLS Enable = Yes
+  TLS Require = Yes
+  TLS CA Certificate File = /etc/bacula/ssl/bacula-ca.crt
+  TLS Certificate = /etc/bacula/ssl/ubuntu-server.crt
+  TLS Key = /etc/bacula/ssl/ubuntu-server.key
+}
+```
+
+A na strani Bacula klijenta postaviti njegov certifikatorski autoritet, certifikat i ključ u postavkama FileDaemona (bacula-fd.conf):
+```
+FileDaemon {                          
+  Name = kali-fd
+  FDport = 9102                 
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /run/bacula
+  Maximum Concurrent Jobs = 20
+  Plugin Directory = /usr/lib/bacula
+
+  TLS Enable = Yes
+  TLS Require = Yes
+  TLS CA Certificate File = /etc/bacula/ssl/bacula-ca.crt
+  TLS Certificate = /etc/bacula/ssl/kali-fd.crt
+  TLS Key = /etc/bacula/ssl/kali-fd.key
+}
+```
+
+Sigurnost samih datoteka omogućena je enkripcijom arhiva koje kreira Duplicity. Pri samom pozivu alata Duplicity definira se identifikator ključa kojim se datoteke kriptiraju alatom GPG. Time se na server u konačnici prenose datoteke s .gpg ekstenzijom. U skripti ```duplicity.sh``` definirani su ```PASSPHRASE``` i ```GPG_KEY_ID```. Preko identifikatora se određuje koji ključ se koristi, a passphrase je lozinka za ključ.
+```
+export PASSPHRASE="kali-backup"
+export GPG_KEY_ID="01116997692469C7"
+...
+
+case "$LEVEL" in
+    "Full")
+        run_postgres_dump
+        /usr/bin/duplicity full --encrypt-key "$GPG_KEY_ID" "$SSH_OPTS" \
+          --archive-dir "$CACHE_DIR" "$BACKUP_SRC" "$BACKUP_DEST"
+        ;;
+    "Incremental")
+        /usr/bin/duplicity incremental --encrypt-key "$GPG_KEY_ID" "$SSH_OPTS" \
+          --archive-dir "$CACHE_DIR" "$BACKUP_SRC" "$BACKUP_DEST"
+        ;;
+```
