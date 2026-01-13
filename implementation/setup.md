@@ -31,14 +31,31 @@ Bacula sama po sebi može provoditi proces sigurnosnog kopiranja, ali prema opis
  - bacula-console - terminalski alat
 Prilikom instalacije Bacule valja paziti na to koja verzija je odabrana jer Bacula podržava tri sustava baza podataka: MySQL, PostgreSQL i SQLite. Bacula koristi jedan od navedenih sustava za vođenje evidencije o provedbi poslova. Prilikom izrade ovog projekta korišten je PostreSQL, pa je i naveden kao jedan od instaliranih alata. Konfiguracija baze podataka je prva stvar koja se pokreće nakon samog preuzimanja. Postavili smo sve po tvorničkim opcijama.
 
-Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njima orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd što će se pokazati korisnim u realizaciji ovog sustava.
+Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njima orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd što će se pokazati korisnim u realizaciji ovog sustava. U početku je bilo zahtjevno uskladiti sve te brojne opcije jer se radi o dugim tekstualnim datotekama koje zahtjevaju poznavanje njihove sintakse. Nakon nekoliko krugova pokušaja spajanja konfigurirali smo vezu klijent-poslužitelj između dvije virtualke bez postavljanja TLS-a jer nam je u početku zadavao komplikacije, a smatrali smo da je važnije prvo ostvariti funkcionalnost, a zatim sigurnost.
 
 ## Implementacija GFS strategije
-Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta ```duplicity.sh``` koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. 
+Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta ```duplicity.sh``` koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. Tako primjerice jedan Job izgleda ovako:
 
-Svaka razina GFS strategije biti će pospremljena u svoj direktorij pa moramo znati radi li se o djedu, ocu ili sinu. Za provedbu Duplicity naredbi važno je razlikovati pune i inkrementalne backupove. Za svaku opciju Bacula će samo imati definiran drugi Job i Pool u kojem će se skripti proslijediti drugačiji parametar. Prema tim parametrima skripta određuje gdje će se i kako će se spremiti kopije. Također, skripta provodi i automatsko čišćenje starih zapisa prema kontekstu posla. Tako primjerice naša politika određuje da se djedovi nikad ne brišu, a očevi i sinovi imaju svoje vlastite kriterije brisanja. Upravo zbog tih kriterija brisanja svaka razina GFS strategije ima svoj direktorij kako bi se primjerice djedovi mogli razlikovati od očeva - oboje su full kopije, što Duplicityju izgleda jednako.
+```
+Job {
+  Name = "Son-Production-Job"
+  Type = Backup
+  Level = Incremental
+  Client = kali-fd
+  FileSet = "DummySet"
+  Schedule = "Sched-Son"
+  Storage = File1
+  Pool = Son
+  Messages = Standard
+  Client Run Before Job = "/usr/local/bin/duplicity.sh %l Son"
+}
+```
 
-Važno je napomenuti kako u direktoriju sina neće biti samo inkrementalne kopije. Zbog načina na koji je Duplicity kreiran, Duplicity svoje sigurnosne kopije vidi u lancima koji se nalaze u trenutnom direktoriju. On ne može za inkrementalne kopije gledati neku čitavu kopiju u drugom direktoriju. Zato će se kod svakog full backupa jedna kopija spremiti u direktorij njemu pripadajuće razine (otac ili djed), te još jedna kopija u direktorij sina da se slijedeće inkrementalne kopije nadovezuju na nju. Naravno, tamo će še češće čistiti pa neće doći do tolikog prostornog zasićenja.
+Definira mu se tip kao backup i ```Level``` kao ```Incremental```. To bi bile prave definicije toga što će se raditi kada bi Bacula sama radila backup, ali ovako je to samo parametar koji mi šaljemo skripti. Osim toga, definira se i ```FileSet``` i ```Storage``` samo zato što Bacula ne pušta dalje bez tih vrijednosti. One nisu postavljene na ništa konkretno. Pool je trebao biti isto više manje samo varijabla koja bi se proslijedila skripti, ali kasnije smo otkrili da se parametar ```%p``` ne može slati klijentima, samo Bacula Directoru. Najvažniji dio Joba u kontekstu ovog projekta je opcija ```Client Run Before Job```. Nakon poziva skripte slijede parametri ```%l``` i hardkodirani tekst ```Son``` koji označava Pool posla, odnosno razinu GFS-a koja se javlja skripti.
+
+Svaka razina GFS strategije biti će pospremljena u svoj direktorij pa moramo znati radi li se o djedu, ocu ili sinu. Za provedbu Duplicity naredbi važno je **razlikovati pune i inkrementalne backupove**. Za svaku opciju Bacula će samo imati definiran zasebni Job i Pool u kojem će se skripti proslijediti drugačiji parametar. U svrhu testiranja i demosntriranja mi smo odlčili implementirati 3 "produkcijske" i 3 "demo" razine GFS-a. Prema tim parametrima skripta određuje gdje će se i kako će se spremiti kopije. Također, skripta provodi i automatsko čišćenje starih zapisa prema kontekstu posla. 
+
+Naša politika određuje da se djedovi nikad ne brišu, a očevi i sinovi imaju svoje vlastite kriterije brisanja. Upravo zbog tih kriterija brisanja svaka razina GFS strategije ima svoj direktorij kako bi se primjerice djedovi mogli razlikovati od očeva - oboje su full kopije, što Duplicityju izgleda jednako. Važno je napomenuti kako u direktoriju sina neće biti samo inkrementalne kopije. Zbog načina na koji je Duplicity kreiran, Duplicity svoje sigurnosne kopije vidi u lancima koji se nalaze u trenutnom direktoriju. On ne može za inkrementalne kopije gledati neku čitavu kopiju u drugom direktoriju. Zato će se kod svakog full backupa jedna kopija spremiti u direktorij njemu pripadajuće razine (otac ili djed), te još jedna kopija u direktorij sina da se slijedeće inkrementalne kopije nadovezuju na nju. Naravno, tamo će še češće čistiti pa neće doći do tolikog prostornog zasićenja.
 
 ## Analiza konfiguracije
 Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
