@@ -12,9 +12,6 @@ Nakon kreiranja mreže dodati ju na oba virtualna stroja u mrežnim postavkama p
 
 Nakon toga, zbog čestog korištenja SSH odlučili smo pripremiti SSH ključeve kako bi se eliminirala potreba za unosom lozinke tijekom čestih spajanja. Alatom ssh-keygen generirali smo ssh ključeve i zatim ih alatom ssh-copy-id prenijeli na drugo računalo.
 
-KONFIGURACIJA FOLDERA?? IL TO POSLE MOŽDA NAPISAT...
-DODAT OPIS O POVEZIVANJU SSL TLS CERTIFIKATOM
-
 ## Instalacija alata
 Prema uputama teme, odabrali smo slijedeće alate i ovako ih rasporedili po strojevima:
  - Klijent
@@ -32,12 +29,14 @@ Bacula sama po sebi može provoditi proces sigurnosnog kopiranja, ali prema opis
  - bacula-sd (StorageDaemon) - alat koji piše na disk računala
  - bacula-fd (FileDaemon) - nekaj
  - bacula-console - terminalski alat
-Prilikom instalacije Bacule valja paziti na to koja verzija je odabrana jer Bacula podržava tri sustava baza podataka: MySQL, PostgreSQL i SQLite. Prilikom izrade ovog projekta korišten je PostreSQL, pa je i naveden kao jedan od instaliranih alata. Konfiguracija baze podataka je prva stvar koja se pokreće nakon samog preuzimanja.
+Prilikom instalacije Bacule valja paziti na to koja verzija je odabrana jer Bacula podržava tri sustava baza podataka: MySQL, PostgreSQL i SQLite. Bacula koristi jedan od navedenih sustava za vođenje evidencije o provedbi poslova. Prilikom izrade ovog projekta korišten je PostreSQL, pa je i naveden kao jedan od instaliranih alata. Konfiguracija baze podataka je prva stvar koja se pokreće nakon samog preuzimanja.
 
-Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njia orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd.
+Svaki od alata ima vlastitu konfigruacijsku datoteku koja omogućava cijelu paletu opcija. Najmoćniji od njih je, kao što mu i samo ime govori - bacula-director. On povezuje sve druge alate i njima orkestrira. Osim što može provoditi klasični backup proces, može izvoditi i naredbe na klijentima koji koriste bacula-fd.
 
 ## Povezivanje Bacule i Duplicityja
 Kako u ovom sustavu Bacula ne radi samostalno potrebno je pomoću Bacule zatražiti akciju od Duplicityja. Srećom, Bacula poslužitelj podržava izvršavanje naredbi na svojim klijentima. Za tu svrhu koristit će se skripta (duplicity.sh) koja je priložena kao deliverable u repozitoriju. Njome će se smanjiti količina koda koja mora biti sadržana u konfiguracijskoj datoteci Bacula Directora. S obzirom na to kako je odabrana GFS strategija, važno je razlikovati pune i inkrementalne backupove, te to radi li se o djedu, ocu ili sinu. Time će upravljati logika skripte, a za svaku opciju Bacula će samo imati definiran drugi Job u kojem će se skripti proslijediti drugačiji parametar.
+
+Važno je napomenuti kako u direktoriju sina neće biti samo inkrementalne kopije zbog načina na koji Duplicity funkcionira. Duplicity svoje sigurnosne kopije vidi u lancima koji se nalaze u trenutnom direktoriju. Zato će se kod svakog full backupa jedna kopija spremiti u direktorij njemu pripadajuće razine (otac ili djed), te još jedna kopija u direktorij sina da se slijedeće inkrementalne kopije nadovezuju na nju. Naravno, tamo će še češće čistiti pa neće doći do tolikog prostornog zasićenja.
 
 ## Postavljanje sustava i analiza konfiguracije
 Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
@@ -141,3 +140,7 @@ case "$LEVEL" in
           --archive-dir "$CACHE_DIR" "$BACKUP_SRC" "$BACKUP_DEST"
         ;;
 ```
+
+Ti ključevi su iznimno važni jer bez njih mi možemo imati sigurnosnu kopiju ali ju ne možemo otključati pa je praktički beskorisna. Ključeve je važno exportati i pohraniti na vanjsku memoriju. U slučaju katastrofe u kojoj treba ponovno dizati sustav ti ključevi se ponovno uvoze u njega i zato moramo imati portabilne kopije.
+
+Za implementaciju TLS-a i GPG enkripcije važno je napomenuti kako ih bacula-fd pokreće kao korisnik bacula. Zato je potrebno isključivo tom korisniku dati pristup za rad s direktorijima u kojima se nalaze certifikati i ključevi. U našem slučaju to su direktoriji ```/var/lib/bacula/.gnupg``` i ```/var/lib/bacula/.ssh``` kojima su prava postavljena na 700 i 600, te je njihov vlasnik korisnik bacula.
