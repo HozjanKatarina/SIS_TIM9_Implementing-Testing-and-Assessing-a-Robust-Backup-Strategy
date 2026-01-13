@@ -65,7 +65,7 @@ Oporavak se provodi povratom obrisanih datoteka iz zadnje dostupne dnevne inkrem
 
 U ovom scenariju simulira se ransomware napad pri kojem dolazi do kompromitacije podataka u zajedničkim direktorijima, primjerice šifriranjem ili izmjenom sadržaja datoteka. Iako su podaci fizički prisutni, oni postaju neupotrebljivi.
 
-S obzirom na opseg projekta, simulacija ransomware napada fokusirana je na posljedice napada, a ne na sam proces širenja zlonamjernog softvera. Oporavak sustava provodi se vraćanjem podataka iz zadnje dostupne čiste pune sigurnosne kopije, uz eventualnu primjenu inkrementalnih kopija izrađenih prije incidenta.
+S obzirom na opseg projekta, simulacija ransomware napada fokusirana je na posljedice napada, a ne na sam proces širenja zlonamjernog softvera. Oporavak sustava provodi se vraćanjem podataka iz zadnje dostupnog backupa(mi smo testirali na zadnjem sin bakcup-u), uz eventualnu primjenu inkrementalnih kopija izrađenih prije incidenta.
 
 
 
