@@ -19,6 +19,11 @@ Dodatna provjera sigurnosne kopije baze podataka provedena je pomoću posebne va
 Na temelju prikazanih rezultata može se zaključiti da implementirani sustav sigurnosnog kopiranja, u kombinaciji s dodatnim mehanizmima validacije, omogućuje pouzdano otkrivanje neispravnih ili nepotpunih oporavaka podataka. Validacija datotečnog sustava i baze podataka pokazala se ključnom komponentom procesa, jer omogućuje razlikovanje između uspješnog i potencijalno problematičnog restore postupka. Time sustav ne osigurava samo izradu sigurnosnih kopija, već i dokaz njihove stvarne iskoristivosti u slučaju incidenta poput ransomware napada.
 
 ## Slučajevi katastrofe
-### Gubitak podataka
+Uz definirane RTO i RPO metrike, tijekom testiranja sustava izmjereno je i stvarno vrijeme oporavka (RTA – Recovery Time Actual).
 
-### Ransomware napad
+U scenariju slučajnog brisanja datoteka izmjereni RTA iznosio je između 5 i 10 minuta, neovisno o broju obrisanih datoteka. Dobiveni rezultat znatno je ispod definiranog RTO-a od 30 minuta do jednog sata. Time je potvrđeno da sustav omogućuje brz i učinkovit oporavak od manjih operativnih incidenata.
+
+U scenariju ransomware napada izmjereni RTA iznosio je približno 90 minuta. Ovo vrijeme uključuje izolaciju kompromitiranog sustava, ponovnu instalaciju virtualnog stroja, konfiguraciju backup okruženja te povrat podataka iz sigurnosnih kopija. S obzirom na to da je definirani RTO za ovaj scenarij do četiri sata, zaključuje se da je oporavak sustava ostvaren unutar prihvatljivih granica.
+
+Usporedbom RTA i RTO vrijednosti za oba testirana scenarija potvrđeno je da implementirani sustav zadovoljava definirane ciljeve oporavka te omogućuje pravovremenu ponovnu uspostavu funkcionalnosti sustava nakon incidenta.
+
