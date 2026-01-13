@@ -1,12 +1,12 @@
-# 1. Teorijski okvir
+# Teorijski okvir
 
 Teorijsko poglavlje pokriva sama objašnjenja toga što je backup i oporavak. Također, detaljnije će biti objašnjene i dodatne podjele, načela i strategije ovih tehnika. One su važne za garantiranje minimalne štete poslovanju u slučaju neočekivanog gubitka podataka bilo ono uzrokovano namjerno ili nenamjerno. U namjerne situacije spadaju primjerice napadi na sustav, dok u nenamjerne situacije spadaju slučajna brisanja podataka ili druge vrste ljudskih grešaka.
 
-## 1.1. Backup
+## Backup
 
 Prema Nelsonu (2011), backup označava proces stvaranja sigurnosne kopije podataka u određenom trenutku, s ciljem njihove zaštite i kasnije obnove u slučaju gubitka. Često ljudi miješaju backup s arhiviranjem, no glavna razlika leži u svrsi i vremenskom horizontu pohrane. Backup se koristi za kratkoročno očuvanje dostupnosti podataka i omogućuje njihovu brzu obnovu u slučaju oštećenja, kvara ili slučajnog brisanja. S druge strane, arhiviranje je namijenjeno dugoročnom čuvanju podataka koji se više aktivno ne koriste, ali ih je potrebno zadržati zbog zakonskih, poslovnih ili povijesnih razloga. Ukratko, backup štiti aktivne podatke od gubitka, dok arhiva čuva neaktivne podatke za buduću referencu. Kod dizajna backup sustava i određivanja njegovih sposobnosti najvažnije je pratiti potrebe organizacije za koju se radi. Dvije ključne metrike koje određuju sposobnosti budućeg sustava su RTO (*Return Time Objective*) i RPO (*Recovery Point Objective*). Riječ je o ciljanim metrikama toga koliko dugo je potrebno da se sustav ponovno digne i toga kolika će biti vremenska šteta nakon dovršetka procesa oporavka. Prema Prestonu (2021.), sustav je važno i testirati kako bi se dobile konkretne metrike implementacije, čime se dobivaju vrijednosti RTA (*Return Time Actual*) i RPA (*Recovery Point Actual*). U politici sustava važno je odrediti i okvirno vrijeme provedbe kopiranja (en. backup window) zbog zahtjevnosti samog procesa, te vremenski period zadržavanja sigurnosnih kopija (*engl. retention policy*). Preston navodi kako je industrijski standard oko 18 mjeseci, jer nakon toga kopije više nisu kompatibilne s trenutnom arhitekturom sustava, a i uglavnom su za oporavak korišteni podaci iz proteklin nekoliko dana. 
 
-### 1.1.1. Vrste backupa
+### Vrste backupa
 
 Razlikujemo nekoliko glavnih tipova sigurnosnih kopija (*engl. backupa*), puni (*engl. full*), diferencijalni (*engl. differential*) i inkrementalni (*engl. incremental*) backup. Svaki od ovih tipova backupova ima svoju primjenu, te ovisi o različitim ograničenjima, količini podataka, učestalosti promjena i samoj dostupnosti resurima (Nelson, 2011.).
 
@@ -18,7 +18,7 @@ Inkrementalni (*engl. incremental*) backup predstavlja vrstu sigurnosnog kopiran
 
 Osim ovih pristupa kopiranju važno je istaknuti i to što se kopira, pa je tako prema Prestonu (2021) važno istaknuti backup na razini pojedinih objekata (*engl. item level*), odnosno datoteka, te backup na razini cijelog diska (*engl. image level*). Backup na razini datoteka poklapa se s laičkom idejom backupa gdje se čine sigurnosne kopije zasebnih datoteka korištenjem datotečnog sustava. Kod ovakvog pristupa postoje dva načela: selektivna inkluzija i selektivna ekskluzija. Inkluzija podrazumijeva ručno biranje svega što bi se trebalo kopirati, a ekskluzija onoga što se ne bi trebalo kopirati. Ekskluzija se može smatrati sigurnijom jer je tako manje vjerojatno da ćemo zaboraviti uključiti nešto što će nam kasnije trebati. Backup na razini diska pak ima direktan pristup pohrani na razini blokova što ga čini bržim za kopirati, ali i prilikom oporavka. U slučaju da je potrebno iskopati samo određenu datoteku slika diska može se montirati (engl. to mount) i pretražiti kao da je riječ o disku u računalu. Ovaj pristup popularan je kod rada s virtualnim strojevima, pa tako većina VM alata podržava kreiranje slika diska u njihovom formatu (npr. vmdk za VMWare).  
 
-#### 1.1.2. Backup strategije 
+#### Backup strategije 
 Razlikujemo različite vrste strategija sigurnosnog kopiranja podataka, pri čemu svaka od njih ima svoje prednosti, ograničenja i optimalna područja primjene. Odabir odgovarajuće strategije ovisi o učestalosti promjena podataka, dostupnim resursima, te zahtjevima za brzinom oporavka sustava u slučaju gubitka podataka. Dobro osmišljena strategija mora osigurati ravnotežu između učinkovitosti, sigurnosti i troškova (Nelson, 2011; Cougias, Heiberger i Koop, 2003). 
 
 Jedna od najosnovnijih strategija je dnevno kopiranje (engl. daily backup), pri čemu se podaci sigurnosno kopiraju jednom dnevno, najčešće tijekom noći kada su sustavi manje opterećeni. Ova metoda omogućuje redovitu zaštitu podataka uz minimalan utjecaj na performanse sustava, ali može rezultirati gubitkom podataka nastalih između dva ciklusa sigurnosnog kopiranja (Preston, 2007).  
@@ -32,18 +32,18 @@ Tower of Hanoi strategija sigurnosnog kopiranja temelji se na poznatoj matemati�
 U suvremenim informatičkim sustavima sve su češće prisutne hibridne strategije sigurnosnog kopiranja (*engl. hybrid backup*), koje kombiniraju lokalnu pohranu podataka i pohranu u oblaku. Takav pristup omogućuje organizacijama da istovremeno iskoriste prednosti brzog lokalnog oporavka te otpornosti i skalabilnosti oblaka, čime se osigurava veća dostupnost i sigurnost podataka. Hibridni backup omogućuje redundanciju, jer se podaci pohranjuju na više fizički odvojenih lokacija, a dodatnu sigurnost pružaju enkripcija i kontrola pristupa. Unatoč nešto višim troškovima, smatra se najsigurnijim i najfleksibilnijim rješenjem za organizacije koje barataju osjetljivim ili poslovno kritičnim informacijama (Rubrik, 2025).
 
 
-#### 1.1.3. Backup baza podataka
+#### Backup baza podataka
 
 Kada se govori o kreiranju sigurnosne kopije baza podataka važno je istaknuti nekoliko pristupa. Fizički backup odnosi se na kreiranje sigurnosnih kopija konkretnih datoteka sa sadržajima baze podataka, konfiguracijskih datoteka i transakcijskih zapisa. Ovakav pristup rezultira brzim oporavkom u slučaju gubitka baze podataka. Princip logičkog backupa baze podataka počiva na ideji da se struktura baze i unosi u nju pohranjuju u ljudski čitljivom obliku kao što su SQL naredbe. U tu svrhu koriste se posebni alati za generiranje naredbi prema bazi podataka. Ovaj pristup prikladan je za manje sustave, no kod većih bi izvedba ogromne količine naredbi mogla dovesti do sporijeg oporavka. Također, i sam proces izvoza naredbi nije pretjerano efikasan. 
 
 
-## 1.2. Oporavak podataka
+## Oporavak podataka
 
 Oporavak podataka (*engl. data recovery*) definira se kao postupak obnove izgubljenih, oštećenih ili nedostupnih podataka natrag u stanje u kojem su bili u ciljanom vremenskom trenutku. Njegova je svrha osigurati kontinuitet rada sustava te smanjiti rizike i negativne posljedice prekida (Nelson, 2011.). Kako bi se olakšalo snalaženje među raznim sigurnosnim kopijama, Preston (2021.) navodi kako je važno evidentirati određene informacije poput toga s kojeg sustava backup dolazi, o kojoj datoteci se radi (cijela putanja), te datum kada je sigurnosna kopija bila kreirana. Važno je istaknuti kako se ponekad proces oporavka može provesti i nekoliko puta uzastopno ukoliko ne znamo u kojem trenutku je došlo do problema (primjerice korupcije ključne datoteke koju nitko nije primijetio).  
 
 Povećanjem ransomware napada tvrtke su shvatile kako moraju imati dobar plan oporavka kako bi se bile sposobne brzo vratiti na noge i tako bile manje atraktivne ucjenjivačima. Planom oporavka pripremaju se postupci da se u slučaju gubitka podataka zna jasna procedura. Važno je specificirati gdje će se dobaviti sklopovlje u slučaju fizičke nesreće, prioriteti oporavka, nasljedna linija ljudi zaduženih za provedbu oporavka te stupanj automacije postupka. 
 
-### 1.2.1. Vrste oporavka
+### Vrste oporavka
 
 Prema Prestonu (2021.), procesi oporavka mogu se podijeliti na operativni oporavak, oporavak sustava (servera) i oporavak od katastrofe. 
 
