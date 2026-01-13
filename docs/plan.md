@@ -67,6 +67,5 @@ U ovom scenariju simulira se ransomware napad pri kojem dolazi do kompromitacije
 
 S obzirom na opseg projekta, simulacija ransomware napada fokusirana je na posljedice napada, a ne na sam proces širenja zlonamjernog softvera. Oporavak sustava provodi se vraćanjem podataka iz zadnje dostupne čiste pune sigurnosne kopije, uz eventualnu primjenu inkrementalnih kopija izrađenih prije incidenta.
 
-Mjerenje RTO u ovom scenariju započinje u trenutku donošenja odluke o povratu podataka iz sigurnosne kopije. Time se osigurava da se oporavak sustava provodi unutar definiranih RTO i RPO vrijednosti, bez korištenja kompromitiranih podataka.
 
 
