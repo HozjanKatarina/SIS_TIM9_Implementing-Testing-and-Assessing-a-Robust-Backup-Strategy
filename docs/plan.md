@@ -25,16 +25,13 @@ Tijekom provedbe mogu se pojaviti izazovi poput poteškoća u konfiguraciji alat
 
 Odabrani pristup sigurnosnog kopiranja obuhvaća samo ključne podatke sustava, dok se sigurnosne kopije cijelog sustava ne izrađuju. Takav pristup omogućuje jasnu demonstraciju učinkovitosti sustava sigurnosnog kopiranja bez nepotrebnog povećavanja složenosti implementacije. Kao osnovni model primijenjena je strategija **Grandfather–Father–Son (GFS)**, jer kombinira inkrementalne i pune sigurnosne kopije, čime se postiže dobar omjer između učestalosti sigurnosnog kopiranja, vremena oporavka i zauzeća prostora za pohranu.
 
-Strategija sigurnosnog kopiranja temelji se na tri ključne skupine podataka tipičnog IT okruženja:
+Strategija sigurnosnog kopiranja temelji se na dvije skupine podataka:
 
 - **Zajednički poslovni podaci**  
   U ovu skupinu ubrajaju se dokumenti i datoteke koje se svakodnevno koriste i često mijenjaju, poput tekstualnih dokumenata, izvještaja i ostalih poslovnih materijala pohranjenih u zajedničkim direktorijima. Gubitak ovih podataka imao bi izravan i značajan utjecaj na poslovne procese, zbog čega se smatraju najkritičnijima.
 
 - **Baza podataka (logička sigurnosna kopija – dump)**  
   Drugu skupinu podataka čini baza podataka pohranjena u obliku logičke sigurnosne kopije (dump), odnosno datoteke koja sadrži izvezene podatke i strukturu baze. Umjesto kopiranja fizičkih datoteka baze, izrađuje se logički izvoz podataka, što olakšava postupak oporavka i testiranje povrata podataka.
-
-- **Konfiguracijske datoteke i automatizacijske skripte**  
-  Treću skupinu čine konfiguracijske datoteke sustava za izradu sigurnosnih kopija i pripadajuće automatizacijske skripte. Njihovo sigurnosno kopiranje omogućuje lakšu i bržu ponovnu konfiguraciju backup sustava u slučaju kvara ili gubitka konfiguracije.
 
 Za sve navedene skupine podataka primjenjuje se sljedeća politika izrade i zadržavanja sigurnosnih kopija:
 - **dnevne inkrementalne sigurnosne kopije**, koje se čuvaju **30 dana**
