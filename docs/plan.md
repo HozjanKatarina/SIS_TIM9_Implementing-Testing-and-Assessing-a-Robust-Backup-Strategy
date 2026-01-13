@@ -47,9 +47,9 @@ RPO (Recovery Point Objective) u ovom projektu razlikuje se ovisno o vrsti incid
 
 RTO (Recovery Time Objective) za scenarij slučajnog brisanja datoteka postavljen je u rasponu od 30 minuta do 1 sata. Ova vrijednost obuhvaća vrijeme potrebno za identifikaciju odgovarajuće sigurnosne kopije te povrat pojedinačnih datoteka bez potrebe za prekidom rada sustava, čime se osigurava brz i učinkovit oporavak uz minimalan utjecaj na korisnike.
 
-Nasuprot tome, ransomware napad predstavlja sigurnosni incident visoke razine, koji zahtijeva znatno složeniji postupak oporavka. U takvom scenariju nužno je izolirati kompromitirani sustav, provesti ponovnu instalaciju operacijskog sustava te vratiti podatke iz provjerenih i neoštećenih sigurnosnih kopija. Zbog složenosti navedenih postupaka, RTO je značajno dulji te iznosi između 8 i 24 sata, što predstavlja maksimalno prihvatljivo vrijeme za potpunu ponovnu uspostavu funkcionalnosti sustava.
+Nasuprot tome, ransomware napad predstavlja sigurnosni incident visoke razine, koji zahtijeva znatno složeniji postupak oporavka. U takvom scenariju nužno je izolirati kompromitirani sustav, provesti ponovnu instalaciju operacijskog sustava te vratiti podatke iz provjerenih i neoštećenih sigurnosnih kopija. Zbog složenosti navedenih postupaka, RTO je značajno dulji te iznosi između 4 i 24 sata, što predstavlja maksimalno prihvatljivo vrijeme za potpunu ponovnu uspostavu funkcionalnosti sustava.
 
-RPO za ransomware scenarij definiran je strože, u rasponu od 15 minuta do 1 sata, s ciljem smanjenja potencijalnog gubitka podataka u slučaju sigurnosnog incidenta. Takav pristup naglašava važnost čestog sigurnosnog kopiranja i pouzdane strategije oporavka, osobito u kontekstu zaštite od zlonamjernih napada koji mogu imati ozbiljne posljedice po integritet i dostupnost podataka.
+RPO za ransomware scenarij je do 24 sata pošto se svakih 24 sata radi backup, jer smatramo da za naš slučaj jedan radni dan izgubljenih podataka nije neka velika šteta. Takav pristup naglašava važnost čestog sigurnosnog kopiranja i pouzdane strategije oporavka, osobito u kontekstu zaštite od zlonamjernih napada koji mogu imati ozbiljne posljedice po integritet i dostupnost podataka.
 
 ## 3.8. Scenariji gubitka podataka i oporavka sustava
 
