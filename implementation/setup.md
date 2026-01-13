@@ -53,7 +53,47 @@ Job {
 
 Definira mu se tip kao backup i ```Level``` kao ```Incremental```. To bi bile prave definicije toga što će se raditi kada bi Bacula sama radila backup, ali ovako je to samo parametar koji mi šaljemo skripti. Osim toga, definira se i ```FileSet``` i ```Storage``` samo zato što Bacula ne pušta dalje bez tih vrijednosti. One nisu postavljene na ništa konkretno. Pool je trebao biti isto više manje samo varijabla koja bi se proslijedila skripti, ali kasnije smo otkrili da se parametar ```%p``` ne može slati klijentima, samo Bacula Directoru. Najvažniji dio Joba u kontekstu ovog projekta je opcija ```Client Run Before Job```. Nakon poziva skripte slijede parametri ```%l``` i hardkodirani tekst ```Son``` koji označava Pool posla, odnosno razinu GFS-a koja se javlja skripti.
 
-Svaka razina GFS strategije biti će pospremljena u svoj direktorij pa moramo znati radi li se o djedu, ocu ili sinu. Za provedbu Duplicity naredbi važno je **razlikovati pune i inkrementalne backupove**. Za svaku opciju Bacula će samo imati definiran zasebni Job i Pool u kojem će se skripti proslijediti drugačiji parametar. U svrhu testiranja i demosntriranja mi smo odlčili implementirati 3 "produkcijske" i 3 "demo" razine GFS-a. Prema tim parametrima skripta određuje gdje će se i kako će se spremiti kopije.
+Bacula pokreće poslove prema rasporedu. Naš trenutni raspored uključuje mjesečnu punu kopiju djeda koja se ne briše, tjednu kopiju oca koji se briše nakog godinu dana i inkrementalnu dnevnu kopiju sina koji se briše nakon mjesec dana.
+
+```
+#Finalni GFS ciklusi
+# Raspored za Grandfather (1. ponedjeljak u mjesecu)
+Schedule {
+  Name = "Sched-GF"
+  Run = Level=Full 1st mon at 23:00
+}
+
+# Raspored za Father (ostali ponedjeljci)
+Schedule {
+  Name = "Sched-Father"
+  Run = Level=Full 2nd-5th mon at 23:00
+}
+
+# Raspored za Son (utorak - nedjelja)
+Schedule {
+  Name = "Sched-Son"
+  Run = Level=Incremental tue-sun at 23:00
+}
+```
+
+```
+Scheduled Jobs:
+Level          Type     Pri  Scheduled          Job Name           Schedule
+=====================================================================================
+Incremental    Backup    10  Tue 13-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Wed 14-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Thu 15-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Fri 16-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Sat 17-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Sun 18-Jan 23:00   Son-Production-Job Sched-Son
+Full           Backup    10  Mon 19-Jan 23:00   Father-Production-Job Sched-Father
+Incremental    Backup    10  Tue 20-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Wed 21-Jan 23:00   Son-Production-Job Sched-Son
+Incremental    Backup    10  Thu 22-Jan 23:00   Son-Production-Job Sched-Son
+====
+```
+
+Svaka razina GFS strategije biti će pospremljena u svoj direktorij pa moramo znati radi li se o djedu, ocu ili sinu. Za provedbu Duplicity naredbi važno je razlikovati pune i inkrementalne backupove. Za svaku opciju Bacula će samo imati definiran zasebni Job i Pool u kojem će se skripti proslijediti drugačiji parametar. U svrhu testiranja i demosntriranja mi smo odlčili implementirati 3 "produkcijske" i 3 "demo" razine GFS-a. Prema tim parametrima skripta određuje gdje će se i kako će se spremiti kopije.
 
 ```
 case "$LEVEL" in
