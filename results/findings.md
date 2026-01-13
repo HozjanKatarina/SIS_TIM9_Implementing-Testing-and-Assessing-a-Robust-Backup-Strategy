@@ -1,4 +1,6 @@
-Zaključak i interpretacija rezultata validacije
+# Zaključak i interpretacija rezultata validacije
+
+## Testovi validacije
 
 Na temelju provedenih testova i prikazanih rezultata validacije moguće je donijeti zaključke o pouzdanosti procesa sigurnosnog kopiranja i oporavka podataka.
 
@@ -15,3 +17,8 @@ Na drugoj slici prikazan je rezultat provjere integriteta i cjelovitosti sigurno
 Dodatna provjera sigurnosne kopije baze podataka provedena je pomoću posebne validacijske skripte, čiji je rezultat prikazan na slici. Skripta je potvrdila tehničku ispravnost dumpa, uspješan restore baze u testnu instancu te semantičku ispravnost podataka, uključujući očekivani broj zapisa i vremenski raspon podataka. Time je potvrđeno da, unatoč razlikama u hash vrijednosti dump datoteke, sigurnosna kopija baze podataka omogućuje ispravan i pouzdan oporavak podataka.
 
 Na temelju prikazanih rezultata može se zaključiti da implementirani sustav sigurnosnog kopiranja, u kombinaciji s dodatnim mehanizmima validacije, omogućuje pouzdano otkrivanje neispravnih ili nepotpunih oporavaka podataka. Validacija datotečnog sustava i baze podataka pokazala se ključnom komponentom procesa, jer omogućuje razlikovanje između uspješnog i potencijalno problematičnog restore postupka. Time sustav ne osigurava samo izradu sigurnosnih kopija, već i dokaz njihove stvarne iskoristivosti u slučaju incidenta poput ransomware napada.
+
+## Slučajevi katastrofe
+### Gubitak podataka
+
+### Ransomware napad
