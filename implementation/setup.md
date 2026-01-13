@@ -155,6 +155,7 @@ Ovakva konfiguracija predstavlja sigurnosni rizik jer omogućuje potencijalno pr
 
 
 2) Backup sadržaj nije enkriptiran
+   
   U skripti duplicity.sh backup je izvođen bez enkripicije:
 ```conf
 /usr/bin/duplicity full --no-encryption \
