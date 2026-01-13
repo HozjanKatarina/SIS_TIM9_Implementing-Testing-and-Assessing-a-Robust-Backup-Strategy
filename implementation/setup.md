@@ -40,13 +40,13 @@ Svaka razina GFS strategije biti će pospremljena u svoj direktorij pa moramo zn
 
 Važno je napomenuti kako u direktoriju sina neće biti samo inkrementalne kopije. Zbog načina na koji je Duplicity kreiran, Duplicity svoje sigurnosne kopije vidi u lancima koji se nalaze u trenutnom direktoriju. On ne može za inkrementalne kopije gledati neku čitavu kopiju u drugom direktoriju. Zato će se kod svakog full backupa jedna kopija spremiti u direktorij njemu pripadajuće razine (otac ili djed), te još jedna kopija u direktorij sina da se slijedeće inkrementalne kopije nadovezuju na nju. Naravno, tamo će še češće čistiti pa neće doći do tolikog prostornog zasićenja.
 
-## Postavljanje sustava i analiza konfiguracije
+## Analiza konfiguracije
 Početna konfiguracija sustava temeljila se na korištenju dva alata. Bacula je služila kao glavni alat za upravljanje i pokretanje backup poslova, dok je Duplicity bio zadužen za stvarno izvođenje backupa i restore operacija nad datotekama. U ovom rješenju Bacula Director na poslužitelju pokreće skriptu na klijentskom sustavu. Skripta prima parametre koje joj prosljeđuje Bacula. Na temelju tih parametara određuje radi li se o punom ili inkrementalnom backupu, a istovremeno se definira i GFS sloj kojem backup pripada.
 
 ### Uočeni nedostatci 
 U nastavku su opisani ključni nedostaci početnog rješenja. Za svaki nedostatak prikazan je konkretan dio konfiguracije ili koda iz kojeg je vidljivo zašto je to problem.
 
-1) Nezaštićena Bacula komunikacija (TLS isključen na klijentu)
+1) **Nezaštićena Bacula komunikacija (TLS isključen na klijentu)**
    
  U konfiguraciji Bacula File Daemona na klijentu TLS je bio isključen, što znači da komunikacija Director ↔ FD nije enkriptirana:
  ```conf
